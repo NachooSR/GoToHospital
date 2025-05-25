@@ -1,18 +1,40 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
 
-var prefijo string ="/api/v1"
+	//"github.com/NachooSR/GoToHospital/internal/config"
+	"github.com/NachooSR/GoToHospital/internal/config"
+	"github.com/NachooSR/GoToHospital/internal/handlers"
+	"github.com/NachooSR/GoToHospital/internal/repository"
+	"github.com/NachooSR/GoToHospital/internal/routes"
+	"github.com/NachooSR/GoToHospital/internal/service"
+	"github.com/gin-gonic/gin"
+	// "gorm.io/driver/postgres"
+	// "gorm.io/gorm"
+)
+
+//Aqui deberiamos hacer un init de las variables
+
+//
+
+var prefijo string = "/api/v1/"
 
 func main() {
 
-	
-  	
-  router := gin.Default()
-  router.GET(prefijo+"/example", func(c *gin.Context) {
-    c.JSON(200, gin.H{
-      "mensaje": "Hola desde Gin GoHospital",
-    })
-  })
-  router.Run() // listen and serve on 0.0.0.0:8080
+	// Conexion a la db y carga de .env
+	configuration := config.LoadConfig()
+	db := config.ConnectDb(configuration)
+
+	// Inicializar repo, service y handler
+	repo := repository.NewMedicoRepository(db)
+	svc := service.NewMedicoService(repo)
+	handler := handlers.NewMedicoHandler(svc)
+
+	// Inicializar router y registrar rutas
+	router := gin.Default()
+	api := router.Group("/api/v1")
+	routes.GetAll(api, handler)
+
+	// Levantar servidor
+	router.Run() // default en puerto 8080
 }
