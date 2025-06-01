@@ -7,7 +7,8 @@ import (
 
 func RegistrarRutasUsuarios(rg *gin.RouterGroup,handler *handlers.UsuarioHandler){
  
-	rg.GET("usuarios",handler.GetAll)
 	rg.POST("createUser",handler.CreateUsuario)
+	rg.GET("usuarios",handler.GetAll)
+	rg.GET("usuario/:id",handler.GetUserById)
 	
 }

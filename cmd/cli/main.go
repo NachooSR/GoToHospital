@@ -3,17 +3,19 @@ package main
 import (
 	"fmt"
 
-	"github.com/NachooSR/GoToHospital/internal/config"
+	// "github.com/NachooSR/GoToHospital/internal/config"
+	// "github.com/NachooSR/GoToHospital/internal/models"
+	// "github.com/NachooSR/GoToHospital/internal/repository"
 	"github.com/NachooSR/GoToHospital/internal/models"
-	"github.com/NachooSR/GoToHospital/internal/repository"
+	"github.com/NachooSR/GoToHospital/internal/validations"
 	//"github.com/NachooSR/GoToHospital/internal/service"
 )
 
 func main() {
 
 	//Inicializacion de db y env variables
-	configuration := config.LoadConfig()
-	db := config.ConnectDb(configuration)
+	// configuration := config.LoadConfig()
+	// db := config.ConnectDb(configuration)
 	//
 
 	/* Pruebas de medico
@@ -50,19 +52,43 @@ func main() {
 		}
 		fmt.Println(medicos2) */
 
-	repoUser := repository.NewUserRepo(db)
+	// repoUser := repository.NewUserRepo(db)
 
+	//Cargamos un usuario para probar
 	usuarioAux := models.Usuario{
 		IdRol:    3,
-		UserName: "holis",
-		Password: "blablablabla",
+		UserName: "holis@gmail.com",
+		Password: "Sprinfield.123#",
 	}
 
-	id, err := repoUser.CreateUser(&usuarioAux)
-	if err != nil {
-		fmt.Println(err)
+	numerito := validations.EmptyField(usuarioAux.UserName)
+	numeroPassword := validations.EmptyField(usuarioAux.Password)
+
+	if numerito != 0 || numeroPassword != 0 {
+
+		fmt.Println("Error campo email o password vacios")
+	    return
 	}
 
-	fmt.Println(id)
+
+	if !validations.ValidadUsername(usuarioAux.UserName) {
+		fmt.Println("El formato de mail es incorrecto")
+		return
+	}
+	if !validations.ValidarPassword(usuarioAux.Password) {
+		fmt.Println("Error la contrasena no es segura")
+		return
+	}
+
+	fmt.Println("Fields llenos y seguros :)")
+
+
+
+	// id, err := repoUser.CreateUser(&usuarioAux)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+
+	// fmt.Println(id)
 
 }

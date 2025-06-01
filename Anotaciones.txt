@@ -1,0 +1,10 @@
+Mejoras a futuro:
+
+Funcion de create User --> Funcion que englobe campos vacios + mail valido + seguridad password
+Codigo statusConflict
+
+Validaciones genericas --> Funciones de buscar ID
+Errores Personalizados
+
+DTO en el handler X --> LLamado a una funcion que cargue la struct
+
