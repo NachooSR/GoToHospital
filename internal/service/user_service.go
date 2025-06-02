@@ -39,12 +39,12 @@ func (sr *userServiceRepo) CreateUser(auxiliar *models.Usuario) (int, error) {
 
 }
 
-func (sr *userServiceRepo) GetAll() ([]models.Usuario, error) {
-	return sr.repo.GetAll()
-}
-
 func (sr *userServiceRepo) GetUserById(id int) (*models.Usuario, error) {
 	return sr.repo.GetUserById(id)
+}
+
+func (sr *userServiceRepo) GetAll() ([]models.Usuario, error) {
+	return sr.repo.GetAll()
 }
 
 func (sr *userServiceRepo) UpdateUser(id int, user *models.Usuario) (*models.Usuario, error) {

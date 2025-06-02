@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/NachooSR/GoToHospital/internal/dto"
-	"github.com/NachooSR/GoToHospital/internal/models"
+
 	"github.com/NachooSR/GoToHospital/internal/validations"
 	"github.com/NachooSR/GoToHospital/pkg/utils"
 
@@ -60,16 +60,12 @@ func (handler *UsuarioHandler) CreateUsuario(c *gin.Context) {
 	}
 
 	//Si estan los campos llenos y cumplen con los requisitos los derivamos al service
-	usuario := models.Usuario{
-		IdRol:    dtoUser.IdRol,
-		UserName: dtoUser.UserName,
-		Password: dtoUser.Password,
-	}
+	usuario := dto.DtoToUser(&dtoUser)
 
 	id, errorcito := handler.servicio.CreateUser(&usuario)
 
 	if errorcito != nil {
-		if errors.Is(errorcito,utils.ErrUsernameExists){
+		if errors.Is(errorcito, utils.ErrUsernameExists) {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "El username ya existe"})
 			return
 		}
@@ -78,22 +74,7 @@ func (handler *UsuarioHandler) CreateUsuario(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"id": id,
-	"user": usuario})
-
-}
-
-func (userHandler *UsuarioHandler) GetAll(c *gin.Context) {
-
-	usuarios, err := userHandler.servicio.GetAll()
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Lo sentimos explot",
-		})
-	}
-	c.JSON(200, gin.H{
-		"Usuarios": usuarios,
-	})
+		"user": usuario})
 
 }
 
@@ -102,23 +83,34 @@ func (userHandler *UsuarioHandler) GetUserById(c *gin.Context) {
 	idUrl := c.Param("id")
 	idNumber, _ := strconv.Atoi(idUrl)
 	usuarioAux, err := userHandler.servicio.GetUserById(idNumber)
-   
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"mensaje": "Id no existente",
 		})
 		return
 	}
-
-	usuarioDto:= dto.UserDtoResponse{
-		IdUser: usuarioAux.IdUser,
-		IdRol: usuarioAux.IdRol,
-		UserName: usuarioAux.UserName,}
+	usuarioDto := dto.ToUserDtoResponse(usuarioAux)
 
 	c.JSON(http.StatusOK, gin.H{
 		"encontrado el user": usuarioDto,
 	})
+}
 
+func (userHandler *UsuarioHandler) GetAll(c *gin.Context) {
+
+	usuarios, err := userHandler.servicio.GetAll()
+
+	usuariosDTO := dto.ArrayUsersToDto(usuarios)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Lo sentimos explot",
+		})
+	}
+	c.JSON(200, gin.H{
+		"Usuarios": usuariosDTO,
+	})
 }
 
 // func(userHandler *UsuarioHandler)Update(c *gin.Context){

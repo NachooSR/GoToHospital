@@ -6,4 +6,3 @@ type Usuario struct {
 	UserName string `gorm:"column:username" json:"username"`
 	Password string `gorm:"column:password" json:"password"`
 }
-type Usuarios[]Usuario

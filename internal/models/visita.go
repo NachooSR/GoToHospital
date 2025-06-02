@@ -6,4 +6,3 @@ type Visita struct {
 	Asunto      string `gorm:"column:asunto" json:"asunto"`
 	Descripcion string `gorm:"column:descripcion" json:"descripcion"`
 }
-type Visitas[]Visita
