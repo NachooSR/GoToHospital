@@ -5,6 +5,6 @@ type Medico struct {
 	IdEspecialidad int          `gorm:"column:id_especialidad" json:"id_especialidad"`
 	Nombre         string       `gorm:"column:nombre" json:"nombre"`
 	Matricula      string       `gorm:"column:matricula" json:"matricula"`
-	Estado         bool         `gorm:"column:estado" json:"estado"`
+	Estado         string       `gorm:"column:estado" json:"estado"`
 	Especialidad   Especialidad `gorm:"foreignKey:IdEspecialidad;references:IdEspecialidad"`
 }

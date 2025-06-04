@@ -7,25 +7,25 @@ import (
 )
 
 type MedicoRepository interface {
-
 	Create(medico *models.Medico) error
 	GetAll() ([]models.Medico, error)
 	GetMedicoById(int) (models.Medico, error)
 	ObtenerMedicosConEspecialidad() ([]dto.MedicoDto, error)
+
+	Delete(int) error
 }
 
 type medicoRepo struct {
 	db *gorm.DB
 }
 
-//Constructor
+// Constructor
 func NewMedicoRepository(db *gorm.DB) MedicoRepository {
 	return &medicoRepo{db: db}
 }
 
-
-//Implementacion de metodos
-func(mr *medicoRepo)Create(medico *models.Medico)error{
+// Implementacion de metodos
+func (mr *medicoRepo) Create(medico *models.Medico) error {
 	var errorx error
 	return errorx
 }
@@ -54,4 +54,8 @@ func (mr *medicoRepo) ObtenerMedicosConEspecialidad() ([]dto.MedicoDto, error) {
 		Joins("left join especialidads on especialidads.id_especialidad = medicos.id_especialidad").
 		Scan(&resultados).Error
 	return resultados, err
+}
+
+func (mr *medicoRepo) Delete(id int) error {
+	return mr.db.Model(&models.Medico{}).Where("id_user= ?", id).Update("estado", "baja").Error
 }

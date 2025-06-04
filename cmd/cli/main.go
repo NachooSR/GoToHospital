@@ -3,19 +3,21 @@ package main
 import (
 	"fmt"
 
-	// "github.com/NachooSR/GoToHospital/internal/config"
+	"github.com/NachooSR/GoToHospital/internal/config"
+	"github.com/NachooSR/GoToHospital/internal/repository"
 	// "github.com/NachooSR/GoToHospital/internal/models"
 	// "github.com/NachooSR/GoToHospital/internal/repository"
 	"github.com/NachooSR/GoToHospital/internal/models"
 	"github.com/NachooSR/GoToHospital/internal/validations"
+	//"gorm.io/gorm"
 	//"github.com/NachooSR/GoToHospital/internal/service"
 )
 
 func main() {
-
+   
 	//Inicializacion de db y env variables
-	// configuration := config.LoadConfig()
-	// db := config.ConnectDb(configuration)
+	configuration := config.LoadConfig()
+	db := config.ConnectDb(configuration)
 	//
 
 	/* Pruebas de medico
@@ -52,15 +54,20 @@ func main() {
 		}
 		fmt.Println(medicos2) */
 
-	// repoUser := repository.NewUserRepo(db)
+
+
+	repoUser := repository.NewUserRepo(db)
 
 	//Cargamos un usuario para probar
 	usuarioAux := models.Usuario{
+		IdUser: 16,
 		IdRol:    3,
 		UserName: "holis@gmail.com",
 		Password: "Sprinfield.123#",
 	}
 
+
+	
 	numerito := validations.EmptyField(usuarioAux.UserName)
 	numeroPassword := validations.EmptyField(usuarioAux.Password)
 
@@ -84,11 +91,11 @@ func main() {
 
 
 
-	// id, err := repoUser.CreateUser(&usuarioAux)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+	id, err := repoUser.CreateUser(&usuarioAux)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	// fmt.Println(id)
+	fmt.Println(id)
 
 }

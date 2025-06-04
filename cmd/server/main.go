@@ -33,9 +33,15 @@ func main() {
 	// handler := handlers.NewMedicoHandler(svc)
 
 	///Usuarios
+	repositorioMedico:= repository.NewMedicoRepository(db)
 	repositorioUsuario := repository.NewUserRepo(db)
-	servicioUser := service.NewUserService(repositorioUsuario)
+
+	servicioUser := service.NewUserService(repositorioUsuario,repositorioMedico)
 	handlerUser := handlers.NewHandlerUser(servicioUser)
+
+	servicioMedico:= service.NewMedicoService(repositorioMedico)
+	handlerMedico:= handlers.NewMedicoHandler(servicioMedico)
+
 
 	// Inicializar router
 	router := gin.Default()
@@ -43,7 +49,7 @@ func main() {
 
 	//Registro rutas
 
-	// routes.RutasMedicos(api, handler)
+	routes.RutasMedicos(api, handlerMedico)
 	routes.RegistrarRutasUsuarios(api, handlerUser)
 
 	// Levantar servidor

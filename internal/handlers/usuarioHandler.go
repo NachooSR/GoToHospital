@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/NachooSR/GoToHospital/internal/dto"
+	
 
 	"github.com/NachooSR/GoToHospital/internal/validations"
 	"github.com/NachooSR/GoToHospital/pkg/utils"
@@ -113,23 +114,127 @@ func (userHandler *UsuarioHandler) GetAll(c *gin.Context) {
 	})
 }
 
-// func(userHandler *UsuarioHandler)Update(c *gin.Context){
+func (userHandler *UsuarioHandler) Update(c *gin.Context) {
 
-// 	idUrl := c.Param("id_user")
-//     idNumber,_ := strconv.Atoi(idUrl)
+	idParam := c.Param("id")
+	idUser, _ := strconv.Atoi(idParam)
 
-// 	var dtoUser dto.UserDto
-// 	errorcito := c.ShouldBindJSON(&dtoUser)
+	//VALIDAR QUE EXISTE USER CON ESE ID
+	exist, err := userHandler.servicio.ExistUser(idUser)
 
-// 	usuarioAux,err := userHandler.servicio.UpdateUser(idNumber,dtoUser)
+	if !exist {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Message": "Id no existente",
+		})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"Message": "Error de programa ",
+		})
+		return
+	}
 
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest,gin.H{
-// 			"mensaje":"Your so fool",
-// 		})
-// 	}
-// 	c.JSON(http.StatusOK,gin.H{
-// 		"encontrado el user":usuarioAux,
-// 	})
+	//SI EXISTE
+	campos := make(map[string]any)
+	errBind := c.ShouldBindJSON(&campos)
 
-// }
+	if errBind != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"Message": "Error de programa Binding",
+		})
+	}
+
+	_, passwordExist := campos["password"]
+	_, usernameExist := campos["username"]
+
+	//Validacion Password
+	if passwordExist {
+		empty := validations.EmptyField(campos["password"].(string))
+		if empty == 1 {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"Message": "Password Vacia",
+			})
+			return
+		}
+		segura := validations.ValidarPassword(campos["password"].(string))
+		if !segura {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"Message": "Password Debil",
+			})
+			return
+		}
+	}
+
+	//Validacion Username
+	if usernameExist {
+		empty := validations.EmptyField(campos["username"].(string))
+		if empty == 1 {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"Message": "Mail Vacio",
+			})
+			return
+		}
+		segura := validations.ValidadUsername(campos["username"].(string))
+		if !segura {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"Message": "Formato de mail no valido",
+			})
+			return
+		}
+	}
+
+	usuario, errorUpdate := userHandler.servicio.UpdateUser(idUser, campos)
+
+	if errorUpdate != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"Message": "Error en el update de datos",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"Modificado": usuario,
+	})
+}
+
+func (userHandler *UsuarioHandler) Delete(c *gin.Context) {
+
+	idParam := c.Param("id")
+	idUser, _ := strconv.Atoi(idParam)
+
+	//VALIDAR QUE EXISTE USER CON ESE ID
+	exist, err := userHandler.servicio.ExistUser(idUser)
+
+	if !exist {
+
+		c.JSON(http.StatusNotFound, gin.H{
+			"Message": "Id no existente",
+		})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"Message": "Error de programa ",
+		})
+		return
+	}
+
+	usuario,_ :=userHandler.servicio.GetUserById(idUser)
+	
+    err = userHandler.servicio.DeleteRol(usuario.IdUser,usuario.IdRol)
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{
+			"Message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Message": "Usuario eliminado (o dado de baja)",
+	})
+	
+
+}
+
+
+

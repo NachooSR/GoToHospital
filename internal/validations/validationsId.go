@@ -2,6 +2,7 @@ package validations
 
 import (
 	"errors"
+	
 
 	"github.com/NachooSR/GoToHospital/internal/models"
 	"gorm.io/gorm"
@@ -21,10 +22,23 @@ func ValidateIdRol(id int, conex *gorm.DB) (bool, error) {
 		//Error = nil porque no hay error, sino que no existe
 		return false, nil
 	}
-
 	return false, result
-
 }
 
+func ValidateIdUser(id int, conex *gorm.DB) (bool, error) {
+
+	UserAux := models.Usuario{}
+	result := conex.First(&UserAux, id).Error
+
+	if result == nil {
+		return true, nil
+	}
+
+	if errors.Is(result, gorm.ErrRecordNotFound) {
+		//Error = nil porque no hay error, sino que no existe
+		return false, nil
+	}
+	return false, result
+}
 
 
