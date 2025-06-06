@@ -8,3 +8,4 @@ type Medico struct {
 	Estado         string       `gorm:"column:estado" json:"estado"`
 	Especialidad   Especialidad `gorm:"foreignKey:IdEspecialidad;references:IdEspecialidad"`
 }
+

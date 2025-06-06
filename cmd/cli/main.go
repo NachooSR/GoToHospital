@@ -68,10 +68,10 @@ func main() {
 
 
 	
-	numerito := validations.EmptyField(usuarioAux.UserName)
-	numeroPassword := validations.EmptyField(usuarioAux.Password)
+	fieldCargado := validations.EmptyField(usuarioAux.UserName)
+	fieldPassword := validations.EmptyField(usuarioAux.Password)
 
-	if numerito != 0 || numeroPassword != 0 {
+	if fieldCargado || fieldPassword {
 
 		fmt.Println("Error campo email o password vacios")
 	    return

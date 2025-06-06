@@ -1,18 +1,21 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/NachooSR/GoToHospital/internal/dto"
 	"github.com/NachooSR/GoToHospital/internal/models"
 	"gorm.io/gorm"
 )
 
 type MedicoRepository interface {
-	Create(medico *models.Medico) error
+	Create(*models.Medico) (int,error)
 	GetAll() ([]models.Medico, error)
 	GetMedicoById(int) (models.Medico, error)
 	ObtenerMedicosConEspecialidad() ([]dto.MedicoDto, error)
 
 	Delete(int) error
+	ExistMedic(int)(bool,error)
 }
 
 type medicoRepo struct {
@@ -25,10 +28,13 @@ func NewMedicoRepository(db *gorm.DB) MedicoRepository {
 }
 
 // Implementacion de metodos
-func (mr *medicoRepo) Create(medico *models.Medico) error {
-	var errorx error
-	return errorx
+
+func (mr *medicoRepo) Create(medico *models.Medico) (int,error) {
+	result:= mr.db.Create(&medico).Error
+	return medico.IdUser,result
 }
+
+
 
 func (mr *medicoRepo) GetAll() ([]models.Medico, error) {
 
@@ -58,4 +64,19 @@ func (mr *medicoRepo) ObtenerMedicosConEspecialidad() ([]dto.MedicoDto, error) {
 
 func (mr *medicoRepo) Delete(id int) error {
 	return mr.db.Model(&models.Medico{}).Where("id_user= ?", id).Update("estado", "baja").Error
+}
+
+func (mr *medicoRepo)ExistMedic(id int)(bool,error){
+	
+	result := mr.db.Where("id_user=?",id).Error
+
+	if result == nil {
+		return true, nil
+	}
+
+	if errors.Is(result, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+
+	return false, result
 }

@@ -1,12 +1,14 @@
 package service
 
 import (
+	"github.com/NachooSR/GoToHospital/internal/dto"
 	"github.com/NachooSR/GoToHospital/internal/models"
 	"github.com/NachooSR/GoToHospital/internal/repository"
-	"github.com/NachooSR/GoToHospital/internal/dto"
+	"github.com/NachooSR/GoToHospital/pkg/utils"
 )
 
 type MedicoService interface {
+	Create(*models.Medico)(int,error)
 	GetAll() ([]models.Medico,error)
 	GetMedicoById(int)(models.Medico,error)
 	ObtenerMedicosConEspecialidad()([]dto.MedicoDto,error)
@@ -21,6 +23,18 @@ func NewMedicoService (repo repository.MedicoRepository)MedicoService{
   return &medicoServiceRepo{repo}
 }
 
+
+func(sr *medicoServiceRepo)Create(medic *models.Medico)(int,error){
+
+	booleano,result:= sr.repositorio.ExistMedic(medic.IdUser)
+    if !booleano {
+		if result !=nil{
+			return 0, result
+		}
+		return 0, utils.ErrRecordNotFound
+	}
+	return sr.repositorio.Create(medic)
+}
 
 //sr = serviceRepo
 func (sr *medicoServiceRepo) GetAll()([]models.Medico,error){

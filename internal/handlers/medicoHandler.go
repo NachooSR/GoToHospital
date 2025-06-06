@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/NachooSR/GoToHospital/internal/models"
 	"github.com/NachooSR/GoToHospital/internal/service"
 	"github.com/gin-gonic/gin"
 )
@@ -16,8 +17,34 @@ func NewMedicoHandler(service service.MedicoService) *MedicoHandler {
 	return &MedicoHandler{service}
 }
 
+// METODOS
+func (mh *MedicoHandler) CreateMedico(c *gin.Context) {
 
-//METODOS
+
+	//ID del usuario--> (username y password previamente cargados)
+
+	/*
+	  Datos que necesito del medico
+	  especialidad //Verificar que existe
+	  nombre      //Verificar emptyField
+      Matricula  //Empty field Y no repetida
+	  Estado    //No verificacion -->Default 
+	*/
+    var medicToParse models.Medico
+	err := c.ShouldBindJSON(&medicToParse)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"Message": "Error to Parse data",
+		})
+		return
+	}
+
+	
+	
+
+}
+
 func (mH *MedicoHandler) GetAll(c *gin.Context) {
 
 	medicos, err := mH.service.GetAll()
@@ -69,9 +96,4 @@ func (mh *MedicoHandler) ObtenerMedicosConEspecialidad(c *gin.Context) {
 				"Medico:": medicosEspecialistas,
 			})
 	}
-}
-
-func (mh *MedicoHandler)CreateMedico(c *gin.Context){
- 
-	
 }

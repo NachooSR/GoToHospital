@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/NachooSR/GoToHospital/internal/dto"
-	
 
 	"github.com/NachooSR/GoToHospital/internal/validations"
 	"github.com/NachooSR/GoToHospital/pkg/utils"
@@ -39,7 +38,7 @@ func (handler *UsuarioHandler) CreateUsuario(c *gin.Context) {
 	UsernameCargado := validations.EmptyField(dtoUser.UserName)
 	PasswordCargada := validations.EmptyField(dtoUser.Password)
 
-	if UsernameCargado == 1 || PasswordCargada == 1 {
+	if UsernameCargado || PasswordCargada {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Campo contrasena o email vacios",
 		})
@@ -151,7 +150,7 @@ func (userHandler *UsuarioHandler) Update(c *gin.Context) {
 	//Validacion Password
 	if passwordExist {
 		empty := validations.EmptyField(campos["password"].(string))
-		if empty == 1 {
+		if empty {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"Message": "Password Vacia",
 			})
@@ -169,7 +168,7 @@ func (userHandler *UsuarioHandler) Update(c *gin.Context) {
 	//Validacion Username
 	if usernameExist {
 		empty := validations.EmptyField(campos["username"].(string))
-		if empty == 1 {
+		if empty {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"Message": "Mail Vacio",
 			})
@@ -219,9 +218,9 @@ func (userHandler *UsuarioHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	usuario,_ :=userHandler.servicio.GetUserById(idUser)
-	
-    err = userHandler.servicio.DeleteRol(usuario.IdUser,usuario.IdRol)
+	usuario, _ := userHandler.servicio.GetUserById(idUser)
+
+	err = userHandler.servicio.DeleteRol(usuario.IdUser, usuario.IdRol)
 	if err != nil {
 		c.JSON(http.StatusForbidden, gin.H{
 			"Message": err.Error(),
@@ -232,9 +231,5 @@ func (userHandler *UsuarioHandler) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"Message": "Usuario eliminado (o dado de baja)",
 	})
-	
 
 }
-
-
-

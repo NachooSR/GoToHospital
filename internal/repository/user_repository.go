@@ -20,7 +20,7 @@ type UserRepository interface {
 
 	Update(int, map[string]any) (*models.Usuario, error)
 
-    Delete(int)error
+	Delete(int) error
 
 	ExistUsername(string) (bool, error)
 	ExistIdUser(int) (bool, error)
@@ -54,8 +54,6 @@ func (r *userRepoGorm) GetUserById(id int) (*models.Usuario, error) {
 	return &aux, nil
 }
 
-
-
 func (r *userRepoGorm) GetAll() ([]models.Usuario, error) {
 
 	var users []models.Usuario
@@ -63,46 +61,29 @@ func (r *userRepoGorm) GetAll() ([]models.Usuario, error) {
 	return users, err
 }
 
-
-
 func (r *userRepoGorm) Update(id int, campos map[string]any) (*models.Usuario, error) {
-    var usuario models.Usuario
+	var usuario models.Usuario
 
 	//Esto es para cargar el usuario y poder devolverlo, si llego aca es porque paso la verificacion del servicio donde existia el ID
-	err := r.db.First(&usuario, id).Error;
-    if err != nil {
-        return nil, err
-    }
+	err := r.db.First(&usuario, id).Error
+	if err != nil {
+		return nil, err
+	}
 
-	err2 := r.db.Model(&usuario).Updates(campos).Error; 
-    if err2 != nil {
-        return nil, err
-    }
-    return &usuario, nil
+	err2 := r.db.Model(&usuario).Updates(campos).Error
+	if err2 != nil {
+		return nil, err
+	}
+	return &usuario, nil
 }
 
+func (r *userRepoGorm) Delete(id int) error {
 
-func (r *userRepoGorm)Delete(id int)error{
- 
-	user:= models.Usuario{}
-	return r.db.Delete(&user,id).Error
+	user := models.Usuario{}
+	return r.db.Delete(&user, id).Error
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-///FUNCIONES AUXILIARES
+// /FUNCIONES AUXILIARES
 func (r *userRepoGorm) ExistUsername(username string) (bool, error) {
 
 	usuarioAux := models.Usuario{}
