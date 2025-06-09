@@ -6,6 +6,7 @@ import (
 
 	"github.com/NachooSR/GoToHospital/internal/models"
 	"github.com/NachooSR/GoToHospital/internal/service"
+	"github.com/NachooSR/GoToHospital/internal/validations"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,16 +21,6 @@ func NewMedicoHandler(service service.MedicoService) *MedicoHandler {
 // METODOS
 func (mh *MedicoHandler) CreateMedico(c *gin.Context) {
 
-
-	//ID del usuario--> (username y password previamente cargados)
-
-	/*
-	  Datos que necesito del medico
-	  especialidad //Verificar que existe
-	  nombre      //Verificar emptyField
-      Matricula  //Empty field Y no repetida
-	  Estado    //No verificacion -->Default 
-	*/
     var medicToParse models.Medico
 	err := c.ShouldBindJSON(&medicToParse)
 
@@ -40,9 +31,52 @@ func (mh *MedicoHandler) CreateMedico(c *gin.Context) {
 		return
 	}
 
-	
+	if fieldEmpty := validations.EmptyField(medicToParse.Nombre); fieldEmpty{
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"Message": "Nombre vacio",
+		})
+		return
+	}
+
+	if fieldEmpty:= validations.EmptyField(medicToParse.Matricula); fieldEmpty {
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"Message": "Matricula vacia",
+		})
+		return
+	}
+
+    ///Verificar si existe la matricula
+	matriculaExist,err := mh.service.ExistMatricula(medicToParse.Matricula);
+
+	if matriculaExist {
+		if err != nil {
+			c.JSON(http.StatusInternalServerError,gin.H{
+			"ERROR": "ERROR EN LA BUSQUEDA DE LA MATRICULA",
+		})
+		return
+		}
+       
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"ERROR": "La matricula ya existe",
+		})
+		return
+	}
+
 	
 
+	IdMedico,errorCreate:= mh.service.Create(&medicToParse)
+
+	if errorCreate != nil{
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"ERROR": "Algo Fallo en la creacion",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK,gin.H{
+		"Message": "Medico creado",
+		"Id": IdMedico,
+	})
 }
 
 func (mH *MedicoHandler) GetAll(c *gin.Context) {

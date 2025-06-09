@@ -8,43 +8,61 @@ import (
 )
 
 type MedicoService interface {
-	Create(*models.Medico)(int,error)
-	GetAll() ([]models.Medico,error)
-	GetMedicoById(int)(models.Medico,error)
-	ObtenerMedicosConEspecialidad()([]dto.MedicoDto,error)
+	Create(*models.Medico) (int, error)
+	GetAll() ([]models.Medico, error)
+	GetMedicoById(int) (models.Medico, error)
+	ObtenerMedicosConEspecialidad() ([]dto.MedicoDto, error)
+	ExistMatricula(string) (bool, error)
 }
 
-type medicoServiceRepo struct{
-	repositorio repository.MedicoRepository
+type medicoServiceRepo struct {
+	repositorio     repository.MedicoRepository
+	repositorioUser repository.UserRepository
 }
 
-//Constructor
-func NewMedicoService (repo repository.MedicoRepository)MedicoService{
-  return &medicoServiceRepo{repo}
+// Constructor
+func NewMedicoService(repo repository.MedicoRepository, repoMedic repository.UserRepository) MedicoService {
+	return &medicoServiceRepo{repositorio: repo, repositorioUser: repoMedic}
 }
 
+func (sr *medicoServiceRepo) Create(medic *models.Medico) (int, error) {
 
-func(sr *medicoServiceRepo)Create(medic *models.Medico)(int,error){
+	userAux, err := sr.repositorioUser.GetUserById(medic.IdUser)
 
-	booleano,result:= sr.repositorio.ExistMedic(medic.IdUser)
-    if !booleano {
-		if result !=nil{
-			return 0, result
-		}
+	if err != nil { //No lo encontro
 		return 0, utils.ErrRecordNotFound
 	}
+
+	//No es un usuario creado para medico
+	if userAux.IdRol != 2 {
+		return 0, utils.ErrInvalidRol
+	}
+
+	existMedico, errConsulta := sr.repositorio.ExistMedico(medic.IdUser)
+
+	if existMedico {
+		return 0, utils.ErrMedicExist
+	}
+	if errConsulta != nil {
+		return 0, errConsulta
+	}
+
 	return sr.repositorio.Create(medic)
 }
 
-//sr = serviceRepo
-func (sr *medicoServiceRepo) GetAll()([]models.Medico,error){
-  return sr.repositorio.GetAll()
+// sr = serviceRepo
+func (sr *medicoServiceRepo) GetAll() ([]models.Medico, error) {
+	return sr.repositorio.GetAll()
 }
 
-func (sr *medicoServiceRepo)GetMedicoById(id int)(models.Medico,error){
+func (sr *medicoServiceRepo) GetMedicoById(id int) (models.Medico, error) {
 	return sr.repositorio.GetMedicoById(id)
 }
 
-func(sr *medicoServiceRepo)ObtenerMedicosConEspecialidad()([]dto.MedicoDto,error){
+func (sr *medicoServiceRepo) ObtenerMedicosConEspecialidad() ([]dto.MedicoDto, error) {
 	return sr.repositorio.ObtenerMedicosConEspecialidad()
+}
+
+func (sr *medicoServiceRepo) ExistMatricula(matricula string) (bool, error) {
+	return sr.repositorio.ExistMatricula(matricula)
 }

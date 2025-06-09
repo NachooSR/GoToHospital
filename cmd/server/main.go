@@ -25,21 +25,16 @@ func main() {
 	configuration := config.LoadConfig()
 	db := config.ConnectDb(configuration)
 
-	// Inicializar repo, service y handler
-
-	///Medicos
-	// repo := repository.NewMedicoRepository(db)
-	// svc := service.NewMedicoService(repo)
-	// handler := handlers.NewMedicoHandler(svc)
-
-	///Usuarios
+	///Inicializar Repos
 	repositorioMedico:= repository.NewMedicoRepository(db)
 	repositorioUsuario := repository.NewUserRepo(db)
 
+	//Inicializar servicios
 	servicioUser := service.NewUserService(repositorioUsuario,repositorioMedico)
-	handlerUser := handlers.NewHandlerUser(servicioUser)
+	servicioMedico:= service.NewMedicoService(repositorioMedico,repositorioUsuario)
 
-	servicioMedico:= service.NewMedicoService(repositorioMedico)
+    //Inicializar handlers
+	handlerUser := handlers.NewHandlerUser(servicioUser)
 	handlerMedico:= handlers.NewMedicoHandler(servicioMedico)
 
 

@@ -7,16 +7,9 @@ import (
 
 var Regex_correo = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
 
-// 1-Vacio 0-No vacio
-func EmptyField(usernamePass string) int {
-	
-	isEmpty := 0
-	if usernamePass == "" {
-		isEmpty = 1
-		return isEmpty
-	}
-
-	return isEmpty
+//True si esta vacio
+func EmptyField(field string) bool {
+	return field == ""
 }
 
 func ValidadUsername(email string) bool {
