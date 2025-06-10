@@ -8,3 +8,5 @@ Errores Personalizados
 
 DTO en el handler X --> LLamado a una funcion que cargue la struct
 
+
+ERRORES CLAROS (corregir)

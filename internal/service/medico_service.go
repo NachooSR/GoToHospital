@@ -9,9 +9,8 @@ import (
 
 type MedicoService interface {
 	Create(*models.Medico) (int, error)
-	GetAll() ([]models.Medico, error)
-	GetMedicoById(int) (models.Medico, error)
-	ObtenerMedicosConEspecialidad() ([]dto.MedicoDto, error)
+	GetAll() ([]dto.MedicoDto, error)
+	GetMedicoById(int) (dto.MedicoDto, error)
 	ExistMatricula(string) (bool, error)
 }
 
@@ -51,17 +50,19 @@ func (sr *medicoServiceRepo) Create(medic *models.Medico) (int, error) {
 }
 
 // sr = serviceRepo
-func (sr *medicoServiceRepo) GetAll() ([]models.Medico, error) {
+func (sr *medicoServiceRepo) GetAll() ([]dto.MedicoDto, error) {
 	return sr.repositorio.GetAll()
 }
 
-func (sr *medicoServiceRepo) GetMedicoById(id int) (models.Medico, error) {
+func (sr *medicoServiceRepo) GetMedicoById(id int) (dto.MedicoDto, error) {
+	exist,err := sr.repositorio.ExistMedico(id)
+	if !exist {
+		return dto.MedicoDto{}, err
+	}
 	return sr.repositorio.GetMedicoById(id)
 }
 
-func (sr *medicoServiceRepo) ObtenerMedicosConEspecialidad() ([]dto.MedicoDto, error) {
-	return sr.repositorio.ObtenerMedicosConEspecialidad()
-}
+
 
 func (sr *medicoServiceRepo) ExistMatricula(matricula string) (bool, error) {
 	return sr.repositorio.ExistMatricula(matricula)

@@ -1,7 +1,7 @@
 package dto
 
 type MedicoDto struct {
-	Mail         string `json:"username"`
+	Username     string `json:"username"`
 	Nombre       string `json:"nombre"`
 	Especialidad string `json:"especialidad"`
 	Matricula    string `json:"matricula"`
