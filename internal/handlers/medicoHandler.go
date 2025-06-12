@@ -113,3 +113,51 @@ func (mh *MedicoHandler) GetMedicoById(c *gin.Context) {
 			"Medico:": medicos,
 		})
 }
+
+func (mh *MedicoHandler) DeleteMedico(c *gin.Context) {
+
+	id := c.Param("id")
+	idNumber, _ := strconv.Atoi(id)
+
+	err := mh.service.DeleteMedico(idNumber)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"Error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Usuario dado de baja": id,
+	})
+}
+
+func (mh *MedicoHandler) Update(c *gin.Context) {
+
+	id := c.Param("id")
+	idNumber, _ := strconv.Atoi(id)
+
+	exist, err := mh.service.ExistMedic(idNumber)
+
+	if !exist {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": err.Error(),
+		})
+	}
+
+	campos := make(map[string]any)
+	errBinding := c.ShouldBindJSON(&campos)
+
+	if errBinding != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"Message": errBinding.Error(),
+		})
+	}
+
+	// _, nombreExist := campos["nombre"]
+	// _, matriculaExist := campos["matricula"]
+	// _, especialidadExist := campos["especialidad"]
+	// _, estadoExist := campos["estado"]
+
+}

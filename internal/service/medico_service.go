@@ -8,10 +8,17 @@ import (
 )
 
 type MedicoService interface {
+	
 	Create(*models.Medico) (int, error)
+	
 	GetAll() ([]dto.MedicoDto, error)
 	GetMedicoById(int) (dto.MedicoDto, error)
+	
+	Update(id int,campos map[string]any)error
+
 	ExistMatricula(string) (bool, error)
+	ExistMedic(int)(bool,error)
+	DeleteMedico(int)error
 }
 
 type medicoServiceRepo struct {
@@ -62,8 +69,32 @@ func (sr *medicoServiceRepo) GetMedicoById(id int) (dto.MedicoDto, error) {
 	return sr.repositorio.GetMedicoById(id)
 }
 
+func(sr *medicoServiceRepo)Update(id int,campos map[string]any)error{
+    return sr.repositorio.Update(id,campos)
+}
+
+
+
+func(sr *medicoServiceRepo)DeleteMedico(id int)error{
+	
+	existMedico,err := sr.repositorio.ExistMedico(id)
+
+	if !existMedico {
+		return err
+	}
+
+	errEstado:= sr.repositorio.EstadoMedico(id)
+	if errEstado != nil {
+		return errEstado
+	}
+	return sr.repositorio.Delete(id)
+}
 
 
 func (sr *medicoServiceRepo) ExistMatricula(matricula string) (bool, error) {
 	return sr.repositorio.ExistMatricula(matricula)
+}
+
+func (sr *medicoServiceRepo)ExistMedic(id int)(bool,error){
+	return sr.repositorio.ExistMedico(id)
 }

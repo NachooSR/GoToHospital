@@ -73,7 +73,7 @@ func(sr *userServiceRepo)DeleteMedico(id int)error{
 func(sr *userServiceRepo)DeleteRol(id,rol int)error{
 
 	switch rol{
-	case 2: return sr.DeleteMedico(id)
+	case 2: return sr.medicoRepo.Delete(id)
 	case 3: return nil
 	case 4: return nil
 	default: return errors.New("PRUEBA")

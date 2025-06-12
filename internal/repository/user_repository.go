@@ -62,6 +62,7 @@ func (r *userRepoGorm) GetAll() ([]models.Usuario, error) {
 }
 
 func (r *userRepoGorm) Update(id int, campos map[string]any) (*models.Usuario, error) {
+	
 	var usuario models.Usuario
 
 	//Esto es para cargar el usuario y poder devolverlo, si llego aca es porque paso la verificacion del servicio donde existia el ID

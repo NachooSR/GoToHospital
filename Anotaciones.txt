@@ -10,3 +10,4 @@ DTO en el handler X --> LLamado a una funcion que cargue la struct
 
 
 ERRORES CLAROS (corregir)
+Funciones aux (exist id, matricula, etc) --> moverlas
