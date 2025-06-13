@@ -17,7 +17,7 @@ type MedicoRepository interface {
 
 	Delete(int) error
 
-	Update(int,map[string]any) error
+	Update(int, map[string]any) error
 
 	ExistMatricula(string) (bool, error)
 	ExistMedico(int) (bool, error)
@@ -69,36 +69,23 @@ func (mr *medicoRepo) Delete(id int) error {
 	return mr.db.Model(&models.Medico{}).Where("id_user= ?", id).Update("estado", "baja").Error
 }
 
-
-func(mr *medicoRepo)Update(id int,campos map[string]any) error{
+func (mr *medicoRepo) Update(id int, campos map[string]any) error {
 
 	var medicoAux models.Medico
-    errCarga := mr.db.First(&medicoAux,id).Error
-	
+	errCarga := mr.db.First(&medicoAux, id).Error
+
 	if errCarga != nil {
 		return errCarga
 	}
 
-    errUpdate := mr.db.Model(&medicoAux).Updates(campos).Error
-    if errUpdate != nil {
+	errUpdate := mr.db.Model(&medicoAux).Updates(campos).Error
+	if errUpdate != nil {
 		return errUpdate
 	}
-	
+
 	return nil
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 ////////////////////////////////////////FUNCIONES AUX//////////////////////////////////////////
 /*
@@ -115,7 +102,7 @@ func (mr *medicoRepo) ExistMatricula(matricula string) (bool, error) {
 	}
 
 	if errors.Is(result, gorm.ErrRecordNotFound) {
-		return false, nil
+		return false, gorm.ErrRecordNotFound
 	}
 
 	return false, result

@@ -155,9 +155,55 @@ func (mh *MedicoHandler) Update(c *gin.Context) {
 		})
 	}
 
-	// _, nombreExist := campos["nombre"]
-	// _, matriculaExist := campos["matricula"]
-	// _, especialidadExist := campos["especialidad"]
-	// _, estadoExist := campos["estado"]
+	_, nombreExist := campos["nombre"]
+	_, matriculaExist := campos["matricula"]
+
+
+	if nombreExist {
+		empty:= validations.EmptyField(campos["nombre"].(string))
+        if empty {
+			c.JSON(http.StatusInternalServerError,gin.H{
+				"Message":"Nombre vacio",
+			})
+			return
+		}	
+	}
+
+	if matriculaExist {
+		empty:= validations.EmptyField(campos["matricula"].(string))
+        if empty {
+			c.JSON(http.StatusInternalServerError,gin.H{
+				"Message":"Matricula vacia",
+			})
+			return
+		}
+		existMatricula,err := mh.service.ExistMatricula(campos["matricula"].(string))
+        if existMatricula {
+			c.JSON(http.StatusInternalServerError,gin.H{
+				"Message":"La matricula ya se encuentra registrada",
+			})
+			return
+		}	
+		if err != nil {
+			c.JSON(http.StatusInternalServerError,gin.H{
+				"Message Error":err.Error(),
+			})
+			return
+		}
+	}
+
+ 	errUpdate:= mh.service.Update(idNumber,campos)
+
+	if errUpdate != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"Message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK,gin.H{
+		"Message":"Usuario Actualizado",
+	})
+
 
 }

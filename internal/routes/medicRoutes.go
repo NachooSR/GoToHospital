@@ -15,5 +15,6 @@ func RutasMedicos(rg *gin.RouterGroup, handler *handlers.MedicoHandler) {
 	rg.GET("medicos/:id", handler.GetMedicoById)
 
 	rg.DELETE("medicos/:id", handler.DeleteMedico)
+	rg.PUT("medicos/:id",handler.Update)
 
 }
