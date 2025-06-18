@@ -15,3 +15,6 @@ Funciones aux (exist id, matricula, etc) --> moverlas
 VERIFICAR
 ESPECIALIDAD EXISTENTE
 ESTADO "alta/baja" --> no poder dar de alta un medico que ya lo esta (viceversa)
+
+ESTADOS DEL ENUM --> ALTA, BAJA, PENDIENTE
+PASAR LOGICA DEL HANDLER --> SERVICIO

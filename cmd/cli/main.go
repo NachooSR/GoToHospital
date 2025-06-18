@@ -8,7 +8,7 @@ import (
 	// "github.com/NachooSR/GoToHospital/internal/models"
 	// "github.com/NachooSR/GoToHospital/internal/repository"
 	"github.com/NachooSR/GoToHospital/internal/models"
-	"github.com/NachooSR/GoToHospital/internal/validations"
+	"github.com/NachooSR/GoToHospital/pkg/validations"
 	//"gorm.io/gorm"
 	//"github.com/NachooSR/GoToHospital/internal/service"
 )

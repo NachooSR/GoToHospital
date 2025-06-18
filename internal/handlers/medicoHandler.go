@@ -6,7 +6,7 @@ import (
 
 	"github.com/NachooSR/GoToHospital/internal/models"
 	"github.com/NachooSR/GoToHospital/internal/service"
-	"github.com/NachooSR/GoToHospital/internal/validations"
+	"github.com/NachooSR/GoToHospital/pkg/validations"
 	"github.com/gin-gonic/gin"
 )
 
